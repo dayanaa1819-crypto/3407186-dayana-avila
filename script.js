@@ -1,497 +1,734 @@
-/* ============================================
-   PROYECTO SEMANA 01 - FICHA DE INFORMACIÓN INTERACTIVA
-   Archivo inicial para el aprendiz
-   ============================================
+/**
+ * ============================================
+ * PROYECTO SEMANA 02 - GESTOR DE COLECCIÓN  
+  E-commerce de libros
+ * Archivo inicial para el aprendiz
+ * ============================================
+ *
+ * INSTRUCCIONES:
+ * 1. Lee el README.md del proyecto para entender los requisitos
+ * 2. Adapta TODOS los TODOs a tu dominio asignado por el instructor
+ * 3. Usa SOLO características ES2023 aprendidas esta semana:
+ *    - Spread operator (...) para copiar arrays/objetos
+ *    - Rest parameters (...args) en funciones
+ *    - Default parameters
+ *    - Array methods: map, filter, reduce, find
+ *    - Object enhancements (shorthand, computed properties)
+ * 4. NUNCA mutes el estado directamente - usa inmutabilidad
+ * 5. Los comentarios deben estar en español
+ * 6. La nomenclatura técnica (variables, funciones) en inglés
+ *
+ * NOTA IMPORTANTE:
+ * Este archivo es una PLANTILLA GENÉRICA.
+ * Debes adaptarlo completamente a tu dominio asignado.
+ * NO copies la implementación de otro compañero.
+ *
+ * EJEMPLO DE REFERENCIA (NO es un dominio asignable):
+ * Planetario - Gestión de cuerpos celestes
+ *
+ * ============================================
+ */
 
-   INSTRUCCIONES:
-   1. Lee el README.md del proyecto para entender los requisitos
-   2. Adapta TODOS los TODOs a tu dominio asignado por el instructor
-   3. Usa SOLO características ES2023 aprendidas esta semana:
-      - const/let (nunca var)
-      - Template literals
-      - Arrow functions
-      - Destructuring
-   4. Prueba tu código frecuentemente en el navegador
-   5. Los comentarios deben estar en español
-   6. La nomenclatura técnica (variables, funciones) en inglés
-
-   NOTA IMPORTANTE:
-   Este archivo es una PLANTILLA GENÉRICA.
-   Debes adaptarlo completamente a tu dominio asignado.
-   NO copies la implementación de otro compañero.
-
-   ============================================ */
+const { Children } = require("react");
 
 // ============================================
-// TODO 1: Crear el objeto de datos de tu dominio
+// ESTADO GLOBAL
 // ============================================
-// Crea un objeto constante con los datos de la entidad principal de tu dominio.
-// Consulta con tu instructor cuál es tu dominio asignado.
-//
-// Tu objeto debe incluir:
-// - Propiedades básicas (strings, numbers, booleans)
-// - Un array de elementos relacionados (cada uno con name/level o similar)
-// - Un objeto de estadísticas o contadores
+
+// Array que almacena todos los elementos de tu colección
+let items = [];
+
+// ID del elemento que se está editando (null si es nuevo)
+let editingItemId = null;
+
+// ============================================
+// TODO 1: DEFINIR CATEGORÍAS DE TU DOMINIO
+// ============================================
+// Define las categorías específicas de tu dominio.
+// Cada categoría debe tener un emoji representativo.
 //
 // EJEMPLO (Planetario - NO es un dominio asignable):
-// const exhibitData = {
-//   name: 'Sistema Solar Interactivo',
-//   description: 'Exhibición inmersiva del sistema solar',
-//   code: 'EXH-001',
-//   location: { room: 'Sala Principal', floor: 2 },
-//   features: [
-//     { name: 'Proyección 360°', level: 95 },
-//     { name: 'Audio envolvente', level: 88 }
-//   ],
-//   stats: { visitors: 15000, rating: 4.8, duration: 45 }
+// const CATEGORIES = {
+//   planet: { name: 'Planeta', emoji: '🪐' },
+//   star: { name: 'Estrella', emoji: '⭐' },
+//   asteroid: { name: 'Asteroide', emoji: '☄️' },
+//   comet: { name: 'Cometa', emoji: '💫' },
+//   moon: { name: 'Luna', emoji: '🌙' }
 // };
 
-const library= {
-  //TODO: Reemplaza 'entity' con el nombre de tu entidad en inglés
- // TODO: Agrega las propiedades específicas de tu dominio
+const CATEGORIES = {
+  // TODO: Define las categorías de tu dominio
+  Fiction: { name: 'Ficcion', emoji: '📚' },
+  Children: { name: 'Infantil', emoji: '🧸' },
+  Classics: { name: 'Clasicos', emoji: '📜' },
+  nonFiction: { name: 'No Ficcion', emoji: '📖' },
+};
 
-  //Propiedades básicas (adapta a tu dominio)
-   name: 'BookCycle',
-  description: 'Marketplace digital para comprar y vender libros usados en excelente estado',
-  identifier: 'BC-01', // código, id, número, etc.
-
-  //Propiedad de contacto o ubicación (si aplica)
-  contact: {
-  email: 'contacto@bookcycle.com',
-  phone: '3109992765',
-  location: 'Colombia,Bogota'
-  },
-
-  //Array de elementos relacionados (adapta a tu dominio)
-  //Ejemplos: skills, ingredients, services, features, amenities
-  books: [
-  { name: 'El Principito', price: 25000,category: 'Infantil' },
-  { name: 'Cien Años De Soledad', price: 35000,category: 'Ficcion' },
-  { name: 'El Principito', price: 25000,category: 'Cien' },
-  ],
-
-  //Array de enlaces o referencias (si aplica)
-  links: [
-  { platform: ' wwww.bookcycle.com', }
-  { platform: ' wwww.instagram.com.bookcycle', }
-  { platform: ' wwww.facebook.com.bookcycle',  }
-  ],
-
-  //Estadísticas o contadores (adapta a tu dominio)
-  stats: {
-  Totalbooks: 130,
-  ActiveUsers: 245,
-  MonthySales: 85, // renombra según tu dominio
-  }
+// Prioridades genéricas (adapta los nombres si es necesario)
+const PRIORITIES = {
+  new: { name: 'Nuevo', color: '#f944e7' },
+  used: { name: 'Usado', color: '#f3ab2f' },
+  damaged: { name: 'Dañado', color: '#f03610' },
 };
 
 // ============================================
-TODO 2: Referencias a elementos del DOM
+// TODO 2: PERSISTENCIA (LocalStorage)
 // ============================================
-Obtén referencias a todos los elementos del DOM necesarios usando const.
-Usa document.getElementById() o document.querySelector()
-//
-Necesitarás referencias para:
- - Elementos de información principal (nombre, descripción, etc.)
-- Contenedor de la lista de items
-- Contenedor de estadísticas
-- Botones de interacción (tema, copiar, mostrar/ocultar)
-- Elementos de notificación (toast)
 
-TODO: Agrega tus referencias al DOM aquí
-
-const bookName = document.getElementById('book-name');
-const bookDescription = document.getElementById('book-description');
-const bookIdentifier = document.getElementById('book-identifier');
-const contactEmail = document.getElementById('contact-email');
-const contactPhone = document.getElementById('contact-phone');
-const contactLocation = document.getElementById('contact-location');
-const booksList = document.getElementById('books-list');
-const statsContainer = document.getElementById('stats');
-const themeToggle = document.getElementById('theme-toggle');
-const copyEmailBtn = document.getElementById('copy-email-btn');
-const toggleBooksBtn = document.getElementById('toggle-books-btn');
-const toast = document.getElementById('toast');
-const toastMessage = document.getElementById('toast-message');
-
-
-
-// ============================================
-// TODO 3: Renderizar información básica
-// ============================================
-// Crea una arrow function llamada 'renderBasicInfo' que:
-// 1. Use destructuring para extraer propiedades de entityData
-// 2. Actualice los elementos del DOM con template literals
-// 3. Muestre la información principal de tu entidad
-
-const renderBasicInfo = () =>
-  // TODO: Usa destructuring para extraer las propiedades
-  // const { name, description, contact: { email, phone } } = entityData;
-
-  // TODO: Actualiza los elementos del DOM usando template literals
-  // entityName.textContent = name;
-  // entityDescription.innerHTML = `<p>${description}</p>`;
-  const {
-    name,
-    description,
-    identifier,
-    contact: { email, phone, location }
-  } = library;
-
-  bookName.textContent = name;
-  bookDescription.innerHTML = `<p>${description}</p>`;
-  bookIdentifier.textContent = `Identificador: ${identifier}`;
-  contactEmail.textContent = `Email: ${email}`;
-  contactPhone.textContent = `Teléfono: ${phone}`;
-  contactLocation.textContent = `Ubicación: ${location}`;
-};
-
-// ============================================
-// TODO 4: Renderizar lista de elementos
-// ============================================
-// Crea una arrow function llamada 'renderItems' que:
-// 1. Reciba un parámetro 'showAll' (por defecto false)
-// 2. Filtre los items para mostrar solo los primeros 4 si showAll es false
-// 3. Use map() para crear el HTML de cada item
-// 4. Use template literals para generar la estructura HTML
-// 5. Actualice el innerHTML del contenedor de items
-//
-// Estructura HTML sugerida para cada item:
-// <div class="item">
-//   <div class="item-name">{name}</div>
-//   <div class="item-level">
-//     <span>{level}%</span>
-//     <div class="level-bar">
-//       <div class="level-fill" style="width: {level}%"></div>
-//     </div>
-//   </div>
-// </div>
-
-const renderItems = (showAll = false) => {
-
-  // TODO: Extrae el array de items de entityData
-  // const { items } = entityData;
-
-  // TODO: Filtra los items si showAll es false
-  // const itemsToShow = showAll ? items : items.slice(0, 4);
-
-  // TODO: Usa map() para generar el HTML de cada item
-  // const itemsHtml = itemsToShow.map(item => {
+/**
+ * Carga los elementos desde LocalStorage
+ * @returns {Array} Array de elementos guardados, o array vacío
+ */
+const loadItems = () => {
+  // TODO: Implementa la carga desde localStorage
+  // 1. Obtén el valor de localStorage con la key de tu dominio
+  // 2. Si existe, usa JSON.parse() para convertirlo a array
+  // 3. Si no existe, retorna array vacío []
+  // 4. Usa el operador ?? para el valor por defecto
+  //
+  // EJEMPLO:
+  // const stored = localStorage.getItem('celestialBodies');
+  // return stored ? JSON.parse(stored) : [];
+  // O más moderno:
   
-const renderItems = (showAll = false) => {
-  const { books } = library;
-  const booksToShow = showAll ? books : books.slice(0, 4);
-  const booksHtml = booksToShow.map(book => {
-    const { name, price, category } = book;
-    return `
-      <div class="item">
-        <div class="item-name">${name}</div>
-        <div class="item-level">
-          <span>$${price}</span>
-          <div class="level-bar">
-            <div class="level-fill" style="width: ${price}%"></div>
-          </div>
-        </div>
-        <div class="item-category">${category}</div>
-      </div>
-    `;
-  }).join('');
-  booksList.innerHTML = booksHtml;
+  return JSON.parse(localStorage.getItem('usedBooks') ?? '[]');
 };
 
-  //   const { name, level } = item;
-  //   return `
-  //     <div class="item">
-  //       <div class="item-name">${name}</div>
-  //       <div class="item-level">
-  //         <span>${level}%</span>
-  //         <div class="level-bar">
-  //           <div class="level-fill" style="width: ${level}%"></div>
-  //         </div>
+/**
+ * Guarda los elementos en LocalStorage
+ * @param {Array} items - Array de elementos a guardar
+ */
+const saveItems = itemsToSave => {
+  // TODO: Implementa el guardado en localStorage
+  // 1. Usa JSON.stringify() para convertir el array a string
+  // 2. Guarda con localStorage.setItem()
+  //
+  // EJEMPLO:
+  // localStorage.setItem('celestialBodies', JSON.stringify(itemsToSave));
+  localStorage.setItem('usedBooks', JSON.stringify(itemsToSave));
+};
+
+// ============================================
+// TODO 3: CRUD - CREAR ELEMENTO
+// ============================================
+
+/**
+ * Crea un nuevo libro con los datos proporcionados
+ * @param {Object} itemData - Datos del nuevo libro
+ * @returns {Array} Nuevo array de elementos (sin mutar el original)
+ */
+const createItem = (itemData = {}) => {
+  // TODO: Implementa la creación de un nuevo elemento
+  // 1. Crea un objeto con las propiedades base:
+  //    - id: Date.now()
+  //    - createdAt: new Date().toISOString()
+  //    - updatedAt: null
+  //    - active: true (o el estado inicial de tu dominio)
+  //
+  // 2. Usa spread operator para combinar:
+  //    - Valores por defecto (default parameters)
+  //    - Los datos recibidos en itemData
+  //
+  // 3. Usa spread para crear nuevo array: [...items, newItem]
+  //
+  // 4. Guarda en localStorage
+  //
+  // 5. Retorna el nuevo array
+  //
+  // EJEMPLO (Planetario):
+
+  const newItem = {
+  title:'Don Quijote De La Mancha',
+  author:'Miguel de Cervantes',
+  category:'Ficcion',
+  priority:'new',
+  //   // Propiedades específicas del dominio:
+  price:25000,
+  description:'books description',
+  ...itemData,
+  id: Date.now(),
+  active: true,
+  createdAt: new Date().toISOString(),
+  updatedAt: null,
+
+  };
+  const newItems = [...items, newItem];
+  saveItems(newItems);
+  return newItems;
+};
+
+// ============================================
+// TODO 4: CRUD - ACTUALIZAR ELEMENTO
+// ============================================
+
+/**
+ * Actualiza un libro existente
+ * @param {Number} id - ID del libro a actualizar
+ * @param {Object} updates - Propiedades a actualizar (ej:{price:30000})
+ * @returns {Array} Nuevo array con el libro actualizado
+ */
+const updateItem = (id, updates) => {
+  // TODO: Implementa la actualización usando map
+  // 1. Usa map para iterar sobre el array
+  // 2. Si item.id === id, combina con spread: { ...item, ...updates, updatedAt: new Date().toISOString() }
+  // 3. Si no coincide, retorna el item sin cambios
+  // 4. Guarda el nuevo array en localStorage
+  // 5. Retorna el nuevo array
+  //
+  // EJEMPLO:
+
+  const updatedItems = items.map(libro =>
+  libro.id === id
+  ? {
+     ...libro, 
+     ...updates,
+      updatedAt: new Date().toISOString()
+     }
+       : libro
+   );
+   saveItems(updatedItems);
+   return updatedItems;
+};
+
+// ============================================
+// TODO 5: CRUD - ELIMINAR ELEMENTO
+// ============================================
+
+/**
+ * Elimina un elemento por su ID
+ * @param {Number} id - ID del elemento a eliminar
+ * @returns {Array} Nuevo array sin el elemento eliminado
+ */
+const deleteItem = id => {
+  // TODO: Implementa la eliminación usando filter
+  // 1. Usa filter para crear nuevo array excluyendo el elemento
+  // 2. Guarda en localStorage
+  // 3. Retorna el nuevo array
+  //
+  // EJEMPLO:
+  // const filteredItems = items.filter(item => item.id !== id);
+  // saveItems(filteredItems);
+  // return filteredItems;
+};
+
+// ============================================
+// TODO 6: CRUD - TOGGLE ESTADO ACTIVO
+// ============================================
+
+/**
+ * Alterna el estado activo/inactivo de un elemento
+ * @param {Number} id - ID del elemento
+ * @returns {Array} Nuevo array con el estado actualizado
+ */
+const toggleItemActive = id => {
+  // TODO: Implementa el toggle usando map
+  // 1. Usa map para encontrar y actualizar el elemento
+  // 2. Invierte el valor de 'active' con !item.active
+  // 3. Actualiza updatedAt
+  // 4. Guarda y retorna
+  //
+  // EJEMPLO:
+  // const updatedItems = items.map(item =>
+  //   item.id === id
+  //     ? { ...item, active: !item.active, updatedAt: new Date().toISOString() }
+  //     : item
+  // );
+  // saveItems(updatedItems);
+  // return updatedItems;
+};
+
+/**
+ * Elimina todos los elementos inactivos
+ * @returns {Array} Nuevo array solo con elementos activos
+ */
+const clearInactive = () => {
+  // TODO: Implementa usando filter
+  // const activeItems = items.filter(item => item.active);
+  // saveItems(activeItems);
+  // return activeItems;
+};
+
+// ============================================
+// TODO 7: FILTROS Y BÚSQUEDA
+// ============================================
+
+/**
+ * Filtra elementos por estado (activo/inactivo)
+ * @param {Array} itemsToFilter - Array de elementos
+ * @param {String} status - 'all' | 'active' | 'inactive'
+ * @returns {Array} Elementos filtrados
+ */
+const filterByStatus = (itemsToFilter, status = 'all') => {
+  // TODO: Implementa el filtro por estado
+  // - 'all': retorna todos
+  // - 'active': filtra donde active === true
+  // - 'inactive': filtra donde active === false
+  //
+  // EJEMPLO:
+  // if (status === 'all') return itemsToFilter;
+  // if (status === 'active') return itemsToFilter.filter(item => item.active);
+  // if (status === 'inactive') return itemsToFilter.filter(item => !item.active);
+  // return itemsToFilter;
+}; 
+
+/**
+ * Filtra elementos por categoría
+ * @param {Array} itemsToFilter - Array de elementos
+ * @param {String} category - Categoría a filtrar o 'all'
+ * @returns {Array} Elementos filtrados
+ */
+const filterByCategory = (itemsToFilter, category = 'all') => {
+  // TODO: Implementa el filtro por categoría
+  // if (category === 'all') return itemsToFilter;
+  // return itemsToFilter.filter(item => item.category === category);
+};
+
+/**
+ * Filtra elementos por prioridad
+ * @param {Array} itemsToFilter - Array de elementos
+ * @param {String} priority - Prioridad a filtrar o 'all'
+ * @returns {Array} Elementos filtrados
+ */
+const filterByPriority = (itemsToFilter, priority = 'all') => {
+  // TODO: Similar a filterByCategory
+};
+
+/**
+ * Busca elementos por texto en nombre y descripción
+ * @param {Array} itemsToFilter - Array de elementos
+ * @param {String} query - Texto a buscar
+ * @returns {Array} Elementos que coinciden
+ */
+const searchItems = (itemsToFilter, query) => {
+  // TODO: Implementa la búsqueda
+  // 1. Si query está vacío, retorna todos
+  // 2. Convierte query a minúsculas
+  // 3. Filtra donde name o description incluyan el query
+  // 4. Usa .toLowerCase() para búsqueda case-insensitive
+  //
+  // EJEMPLO:
+  // if (!query || query.trim() === '') return itemsToFilter;
+  // const searchTerm = query.toLowerCase();
+  // return itemsToFilter.filter(item =>
+  //   item.name.toLowerCase().includes(searchTerm) ||
+  //   (item.description ?? '').toLowerCase().includes(searchTerm)
+  // );
+};
+
+/**
+ * Aplica todos los filtros de forma encadenada
+ * @param {Array} itemsToFilter - Array de elementos
+ * @param {Object} filters - Objeto con todos los filtros
+ * @returns {Array} Elementos filtrados
+ */
+const applyFilters = (itemsToFilter, filters = {}) => {
+  // TODO: Implementa aplicación de filtros encadenada
+  // Usa destructuring con default values para los filtros
+  //
+  // EJEMPLO:
+  // const {
+  //   status = 'all',
+  //   category = 'all',
+  //   priority = 'all',
+  //   search = ''
+  // } = filters;
+  //
+  // // Encadena los filtros
+  // let result = filterByStatus(itemsToFilter, status);
+  // result = filterByCategory(result, category);
+  // result = filterByPriority(result, priority);
+  // result = searchItems(result, search);
+  // return result;
+};
+
+// ============================================
+// TODO 8: ESTADÍSTICAS
+// ============================================
+
+/**
+ * Calcula estadísticas generales de la colección
+ * @param {Array} itemsToAnalyze - Array de elementos
+ * @returns {Object} Objeto con estadísticas
+ */
+const getStats = (itemsToAnalyze = []) => {
+  // TODO: Implementa el cálculo de estadísticas usando reduce
+  // Retorna un objeto con:
+  // - total: número total de elementos
+  // - active: elementos activos
+  // - inactive: elementos inactivos
+  // - byCategory: objeto con conteo por categoría
+  // - byPriority: objeto con conteo por prioridad
+  //
+  // EJEMPLO:
+  // const total = itemsToAnalyze.length;
+  // const active = itemsToAnalyze.filter(item => item.active).length;
+  // const inactive = total - active;
+  //
+  // // Usa reduce para agrupar por categoría
+  // const byCategory = itemsToAnalyze.reduce((acc, item) => {
+  //   acc[item.category] = (acc[item.category] ?? 0) + 1;
+  //   return acc;
+  // }, {});
+  //
+  // // Usa reduce para agrupar por prioridad
+  // const byPriority = itemsToAnalyze.reduce((acc, item) => {
+  //   acc[item.priority] = (acc[item.priority] ?? 0) + 1;
+  //   return acc;
+  // }, {});
+  //
+  // return { total, active, inactive, byCategory, byPriority };
+};
+
+// ============================================
+// TODO 9: RENDERIZADO - ELEMENTO INDIVIDUAL
+// ============================================
+
+/**
+ * Obtiene el emoji de una categoría
+ * @param {String} category - Clave de la categoría
+ * @returns {String} Emoji de la categoría
+ */
+const getCategoryEmoji = category => {
+  return CATEGORIES[category]?.emoji ?? '📌';
+};
+
+/**
+ * Formatea una fecha ISO a formato legible
+ * @param {String} dateString - Fecha en formato ISO
+ * @returns {String} Fecha formateada
+ */
+const formatDate = dateString => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+/**
+ * Renderiza un elemento individual como HTML
+ * @param {Object} item - Objeto del elemento
+ * @returns {String} HTML del elemento
+ */
+const renderItem = item => {
+  // TODO: Implementa el renderizado usando template literals
+  // 1. Usa destructuring para extraer propiedades
+  // 2. Usa template literals para el HTML
+  // 3. Añade clases condicionales para estado y prioridad
+  // 4. Incluye checkbox, información y botones de acción
+  //
+  // EJEMPLO:
+  // const { id, name, description, category, priority, active, createdAt } = item;
+  //
+  // return `
+  //   <div class="item ${active ? '' : 'inactive'} priority-${priority}" data-item-id="${id}">
+  //     <input type="checkbox" class="item-checkbox" ${active ? 'checked' : ''}>
+  //     <div class="item-content">
+  //       <h3 class="item-name">${name}</h3>
+  //       ${description ? `<p class="item-description">${description}</p>` : ''}
+  //       <div class="item-meta">
+  //         <span class="badge badge-category">${getCategoryEmoji(category)} ${CATEGORIES[category]?.name ?? category}</span>
+  //         <span class="badge badge-priority priority-${priority}">${PRIORITIES[priority]?.name ?? priority}</span>
+  //         <span class="item-date">📅 ${formatDate(createdAt)}</span>
   //       </div>
   //     </div>
-  //   `;
-  // }).join('');
-
-  // TODO: Actualiza el contenedor de items
-  // itemsList.innerHTML = itemsHtml;
-};
-
-// ============================================
-// TODO 5: Renderizar enlaces/referencias
-// ============================================
-// Crea una arrow function llamada 'renderLinks' que:
-// 1. Use destructuring para extraer el array de links de entityData
-// 2. Use map() para crear HTML de cada enlace
-// 3. Use template literals para generar etiquetas anchor
-// 4. Actualice el contenedor de links
-
-const renderLinks = () => {
-  const { links } = library;
-  const linksHtml = links.map(link => {
-    const { platform, url } = link;
-    return `
-      <a href="${url}" target="_blank" class="link">
-        ${platform}
-      </a>
-    `;
-  }).join('');
-  const socialLinks = document.getElementById('socialLinks');
-  socialLinks.innerHTML = linksHtml;
-
-
-  // TODO: Implementa el renderizado de enlaces
-  // Si tu dominio no tiene enlaces, adapta esta función para
-  // mostrar otra información relevante (categorías, tags, etc.)
-};
-
-// ============================================
-// TODO 6: Calcular y renderizar estadísticas
-// ============================================
-// Crea una arrow function llamada 'renderStats' que:
-// 1. Use destructuring para extraer el objeto stats de entityData
-// 2. Crea un array de objetos con label y value para cada estadística
-// 3. Use map() para generar HTML de cada estadística
-// 4. Use template literals para la estructura HTML
-// 5. Actualice el contenedor de stats
-//
-// Estructura HTML sugerida para cada stat:
-// <div class="stat-item">
-//   <span class="stat-value">{value}</span>
-//   <span class="stat-label">{label}</span>
-// </div>
-
-const renderStats = () => {
-
-  const { stats } = library;
-  const statsArray = [
-    { label: 'Total Libros', value: stats.Totalbooks },
-    { label: 'Usuarios Activos', value: stats.ActiveUsers },
-    { label: 'Ventas Mensuales', value: stats.MonthySales },
-  ];
-  const statsHtml = statsArray.map(stat => `
-    <div class="stat-item">
-      <span class="stat-value">${stat.value}</span>
-      <span class="stat-label">${stat.label}</span>
-    </div>
-  `).join('');
-  statsContainer.innerHTML = stats
-
-
-  
-  // TODO: Extrae las estadísticas de entityData
-  // const { stats } = entityData;
-
-  // TODO: Crea array con labels descriptivos en español
-  // const statsArray = [
-  //   { label: 'Total', value: stats.total },
-  //   { label: 'Activos', value: stats.active },
-  //   { label: 'Rating', value: stats.rating },
-  //   { label: 'Otro', value: stats.custom }
-  // ];
-
-  // TODO: Genera el HTML usando map()
-  // const statsHtml = statsArray.map(stat => `
-  //   <div class="stat-item">
-  //     <span class="stat-value">${stat.value}</span>
-  //     <span class="stat-label">${stat.label}</span>
+  //     <div class="item-actions">
+  //       <button class="btn-edit" title="Editar">✏️</button>
+  //       <button class="btn-delete" title="Eliminar">🗑️</button>
+  //     </div>
   //   </div>
-  // `).join('');
-
-  // TODO: Actualiza el contenedor
-  // statsContainer.innerHTML = statsHtml;
+  // `;
 };
 
 // ============================================
-// TODO 7: Funcionalidad de cambio de tema
+// TODO 10: RENDERIZADO - LISTA COMPLETA
 // ============================================
-// Crea una arrow function llamada 'toggleTheme' que:
-// 1. Obtenga el tema actual de document.documentElement.dataset.theme
-// 2. Calcule el nuevo tema (si es 'dark' cambia a 'light' y viceversa)
-// 3. Actualice document.documentElement.dataset.theme
-// 4. Actualice el ícono del botón (🌙 para modo claro, ☀️ para modo oscuro)
-// 5. (Opcional) Guarde la preferencia en localStorage
-//
-// También crea 'loadTheme' para:
-// 1. Obtener el tema guardado de localStorage
-// 2. Aplicarlo si existe
 
-const toggleTheme = () => {
-  const currentTheme = document.documentElement.dataset.theme;
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.dataset.theme = newTheme;
-  themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('theme', newTheme);
+/**
+ * Renderiza la lista completa de elementos
+ * @param {Array} itemsToRender - Array de elementos a renderizar
+ */
+const renderItems = itemsToRender => {
+  const itemList = document.getElementById('item-list');
+  const emptyState = document.getElementById('empty-state');
+
+  // TODO: Implementa el renderizado de la lista
+  // 1. Si no hay elementos, muestra el empty state
+  // 2. Si hay elementos:
+  //    - Usa map para convertir cada item a HTML con renderItem
+  //    - Une con .join('')
+  //    - Asigna a itemList.innerHTML
+  //
+  // EJEMPLO:
+  // if (itemsToRender.length === 0) {
+  //   itemList.innerHTML = '';
+  //   emptyState.style.display = 'block';
+  // } else {
+  //   emptyState.style.display = 'none';
+  //   itemList.innerHTML = itemsToRender.map(renderItem).join('');
+  // }
 };
 
-const loadTheme = () => {
-  const savedTheme = localStorage.getItem('theme') ?? 'light';
-  document.documentElement.dataset.theme = savedTheme;
-  themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-};
-
-
-  // TODO: Implementa el cambio de tema
-  // const currentTheme = document.documentElement.dataset.theme;
-  // const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  // document.documentElement.dataset.theme = newTheme;
-
-  // TODO: Actualiza el ícono del botón
-  // themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-
-  // TODO: (Opcional) Guarda en localStorage
-  // localStorage.setItem('theme', newTheme);
-const loadTheme = () => {
-  // TODO: Carga el tema desde localStorage
-  // const savedTheme = localStorage.getItem('theme') ?? 'light';
-  // document.documentElement.dataset.theme = savedTheme;
-  // themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-};
-
-
-// ============================================
-// TODO 8: Funcionalidad de copiar información
-// ============================================
-// Crea una arrow function llamada 'copyInfo' que:
-// 1. Construya un string con la información principal usando template literals
-// 2. Use navigator.clipboard.writeText() para copiar al portapapeles
-// 3. Muestre una notificación toast de éxito
-// 4. Use la función auxiliar showToast
-
-const copyInfo = () => {
-  const { name, description, contact } = library;
-  const infoText = `
-    ${name}
-    ${description}
-    Contacto: ${contact.email}
-  `.trim();
-  navigator.clipboard.writeText(infoText)
-    .then(() => {
-      showToast('¡Información copiada al portapapeles!');
-    })
-    .catch(err => {
-      console.error('Error al copiar al portapapeles:', err);
-    });
-};
-
-
-  // TODO: Construye el texto a copiar
-  // const { name, description, contact } = entityData;
-  // const infoText = `
-  //   ${name}
-  //   ${description}
-  //   Contacto: ${contact?.email ?? 'No disponible'}
-  // `.trim();
-
-  // TODO: Copia al portapapeles
-  // navigator.clipboard.writeText(infoText);
-
-  // TODO: Muestra notificación
-  // showToast('¡Información copiada al portapapeles!');
-};
-
-// Función auxiliar para mostrar notificaciones toast
-const showToast = message => {
-  // toastMessage.textContent = message;
-  // toast.classList.add('show');
-
-  // setTimeout(() => {
-  //   toast.classList.remove('show');
-  // }, 3000);
+/**
+ * Renderiza las estadísticas en el DOM
+ * @param {Object} stats - Objeto con estadísticas
+ */
+const renderStats = stats => {
+  // TODO: Actualiza los elementos del DOM con las estadísticas
+  // Usa template literals para mostrar los números
+  //
+  // EJEMPLO:
+  // document.getElementById('stat-total').textContent = stats.total;
+  // document.getElementById('stat-active').textContent = stats.active;
+  // document.getElementById('stat-inactive').textContent = stats.inactive;
+  //
+  // // Renderiza estadísticas por categoría
+  // const categoryStats = Object.entries(stats.byCategory)
+  //   .map(([cat, count]) => `${getCategoryEmoji(cat)} ${CATEGORIES[cat]?.name ?? cat}: ${count}`)
+  //   .join(' | ');
+  // document.getElementById('stats-details').textContent = categoryStats;
 };
 
 // ============================================
-// TODO 9: Funcionalidad de mostrar/ocultar items
+// TODO 11: EVENT HANDLERS
 // ============================================
-// Crea una arrow function llamada 'handleToggleItems' que:
-// 1. Use una variable para rastrear si todos los items están visibles
-// 2. Alterne la visibilidad
-// 3. Llame a renderItems con el parámetro apropiado
-// 4. Actualice el texto del botón ("Mostrar más" / "Mostrar menos")
 
-let showingAllItems = false;
+/**
+ * Maneja el envío del formulario (crear/editar)
+ * @param {Event} e - Evento del formulario
+ */
+const handleFormSubmit = e => {
+  e.preventDefault();
 
-const handleToggleItems = () => {
-let showingAllItems = false;
-const handleToggleItems = () => {
-  showingAllItems = !showingAllItems;
-  renderItems(showingAllItems);
-  toggleBooksBtn.textContent = showingAllItems ? 'Mostrar menos' : 'Mostrar más';
+  // TODO: Obtén los valores del formulario
+  // Adapta los campos a tu dominio
+  //
+  // EJEMPLO:
+  // const name = document.getElementById('item-name').value.trim();
+  // const description = document.getElementById('item-description').value.trim();
+  // const category = document.getElementById('item-category').value;
+  // const priority = document.getElementById('item-priority').value;
+  // // Campos específicos del dominio:
+  // const magnitude = document.getElementById('item-magnitude')?.value ?? '';
 
-  // TODO: Implementa la lógica de toggle
-  // showingAllItems = !showingAllItems;
-  // renderItems(showingAllItems);
-  // toggleItemsBtn.textContent = showingAllItems ? 'Mostrar menos' : 'Mostrar más';
+  // TODO: Valida que el nombre no esté vacío
+  // if (!name) {
+  //   alert('El nombre es obligatorio');
+  //   return;
+  // }
+
+  // TODO: Crea el objeto con los datos
+  // const itemData = { name, description, category, priority };
+
+  // TODO: Si hay editingItemId, actualiza; si no, crea nuevo
+  // if (editingItemId) {
+  //   items = updateItem(editingItemId, itemData);
+  // } else {
+  //   items = createItem(itemData);
+  // }
+
+  // TODO: Resetea el formulario y re-renderiza
+  // resetForm();
+  // renderItems(applyCurrentFilters());
+  // renderStats(getStats(items));
+};
+
+/**
+ * Maneja el click en checkbox de un elemento
+ * @param {Number} itemId - ID del elemento
+ */
+const handleItemToggle = itemId => {
+  // TODO: Implementa el toggle
+  // items = toggleItemActive(itemId);
+  // renderItems(applyCurrentFilters());
+  // renderStats(getStats(items));
+};
+
+/**
+ * Maneja el click en botón editar
+ * @param {Number} itemId - ID del elemento a editar
+ */
+const handleItemEdit = itemId => {
+  // TODO: Implementa la edición
+  // 1. Encuentra el elemento con find()
+  // 2. Rellena el formulario con sus datos
+  // 3. Cambia el título del formulario
+  // 4. Cambia el botón submit
+  // 5. Muestra el botón cancelar
+  // 6. Guarda editingItemId
+  //
+  // EJEMPLO:
+  // const itemToEdit = items.find(item => item.id === itemId);
+  // if (!itemToEdit) return;
+  //
+  // document.getElementById('item-name').value = itemToEdit.name;
+  // document.getElementById('item-description').value = itemToEdit.description ?? '';
+  // document.getElementById('item-category').value = itemToEdit.category;
+  // document.getElementById('item-priority').value = itemToEdit.priority;
+  //
+  // document.getElementById('form-title').textContent = '✏️ Editar Elemento';
+  // document.getElementById('submit-btn').textContent = 'Actualizar';
+  // document.getElementById('cancel-btn').style.display = 'inline-block';
+  //
+  // editingItemId = itemId;
+};
+
+/**
+ * Maneja el click en botón eliminar
+ * @param {Number} itemId - ID del elemento a eliminar
+ */
+const handleItemDelete = itemId => {
+  // TODO: Implementa la eliminación con confirmación
+  // if (!confirm('¿Estás seguro de que deseas eliminar este elemento?')) return;
+  // items = deleteItem(itemId);
+  // renderItems(applyCurrentFilters());
+  // renderStats(getStats(items));
+};
+
+/**
+ * Obtiene los filtros actuales del DOM
+ * @returns {Object} Objeto con los valores de los filtros
+ */
+const getCurrentFilters = () => {
+  // TODO: Retorna un objeto con los valores actuales de los filtros
+  // return {
+  //   status: document.getElementById('filter-status').value,
+  //   category: document.getElementById('filter-category').value,
+  //   priority: document.getElementById('filter-priority').value,
+  //   search: document.getElementById('search-input').value
+  // };
+};
+
+/**
+ * Aplica los filtros actuales y retorna los elementos filtrados
+ * @returns {Array} Elementos filtrados
+ */
+const applyCurrentFilters = () => {
+  const filters = getCurrentFilters();
+  return applyFilters(items, filters);
+};
+
+/**
+ * Maneja cambios en los filtros
+ */
+const handleFilterChange = () => {
+  // TODO: Aplica filtros y re-renderiza
+  // const filteredItems = applyCurrentFilters();
+  // renderItems(filteredItems);
+};
+
+/**
+ * Resetea el formulario a su estado inicial
+ */
+const resetForm = () => {
+  // TODO: Limpia el formulario
+  // document.getElementById('item-form').reset();
+  // document.getElementById('form-title').textContent = '➕ Nuevo Elemento';
+  // document.getElementById('submit-btn').textContent = 'Crear';
+  // document.getElementById('cancel-btn').style.display = 'none';
+  // editingItemId = null;
 };
 
 // ============================================
-// TODO 10: Event Listeners
+// TODO 12: EVENT LISTENERS
 // ============================================
-// Agrega event listeners para:
-// 1. Click en botón de tema -> toggleTheme
-// 2. Click en botón de copiar -> copyInfo
-// 3. Click en botón de toggle items -> handleToggleItems
 
-themeToggle.addEventListener('click', toggleTheme);
-copyEmailBtn.addEventListener('click', copyInfo);
-toggleBooksBtn.addEventListener('click', handleToggleItems);
+/**
+ * Adjunta todos los event listeners necesarios
+ */
+const attachEventListeners = () => {
+  // TODO: Form submit
+  // document.getElementById('item-form').addEventListener('submit', handleFormSubmit);
 
+  // TODO: Cancel button
+  // document.getElementById('cancel-btn').addEventListener('click', resetForm);
 
-// TODO: Agrega los event listeners aquí
-// themeToggle.addEventListener('click', toggleTheme);
-// copyBtn.addEventListener('click', copyInfo);
-// toggleItemsBtn.addEventListener('click', handleToggleItems);
+  // TODO: Filtros - cada cambio dispara handleFilterChange
+  // document.getElementById('filter-status').addEventListener('change', handleFilterChange);
+  // document.getElementById('filter-category').addEventListener('change', handleFilterChange);
+  // document.getElementById('filter-priority').addEventListener('change', handleFilterChange);
+  // document.getElementById('search-input').addEventListener('input', handleFilterChange);
 
-// ============================================
-// TODO 11: Inicializar la aplicación
-// ============================================
-// Crea una arrow function llamada 'init' que:
-// 1. Llame a loadTheme()
-// 2. Llame a renderBasicInfo()
-// 3. Llame a renderItems()
-// 4. Llame a renderLinks()
-// 5. Llame a renderStats()
-// 6. Muestre un mensaje de éxito en la consola
+  // TODO: Botón limpiar inactivos
+  // document.getElementById('clear-inactive').addEventListener('click', () => {
+  //   if (confirm('¿Eliminar todos los elementos inactivos?')) {
+  //     items = clearInactive();
+  //     renderItems(applyCurrentFilters());
+  //     renderStats(getStats(items));
+  //   }
+  // });
 
-const init = () =>
-  loadTheme();
-  renderBasicInfo();
-  renderItems();
-  renderLinks();
-  renderStats();
-  console.log('✅ Aplicación inicializada correctamente');
+  // TODO: Event delegation para la lista de elementos
+  // document.getElementById('item-list').addEventListener('click', e => {
+  //   const itemElement = e.target.closest('.item');
+  //   if (!itemElement) return;
+  //
+  //   const itemId = parseInt(itemElement.dataset.itemId);
+  //
+  //   if (e.target.classList.contains('item-checkbox')) {
+  //     handleItemToggle(itemId);
+  //   } else if (e.target.classList.contains('btn-edit')) {
+  //     handleItemEdit(itemId);
+  //   } else if (e.target.classList.contains('btn-delete')) {
+  //     handleItemDelete(itemId);
+  //   }
+  // });
 };
 
-// Ejecuta init cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', init);
+// ============================================
+// TODO 13: INICIALIZACIÓN
+// ============================================
 
-
-  // TODO: Inicializa todos los componentes
-  // loadTheme();
-  // renderBasicInfo();
-  // renderItems();
-  // renderLinks();
-  // renderStats();
+/**
+ * Inicializa la aplicación
+ */
+const init = () => {
+  // TODO: Implementa la inicialización
+  // 1. Carga los elementos desde localStorage
+  // 2. Renderiza la lista
+  // 3. Renderiza las estadísticas
+  // 4. Adjunta los event listeners
+  // 5. Muestra mensaje de éxito en consola
+  //
+  // EJEMPLO:
+  // items = loadItems();
+  // renderItems(items);
+  // renderStats(getStats(items));
+  // attachEventListeners();
   // console.log('✅ Aplicación inicializada correctamente');
+};
 
-
-// Ejecuta init cuando el DOM esté listo
-init();
+// Ejecutar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
 
 // ============================================
 // CHECKLIST DE VERIFICACIÓN
 // ============================================
 // Después de completar todos los TODOs, verifica:
-// ✓ La información de tu dominio se muestra correctamente
-// ✓ Los items muestran niveles/porcentajes con barras
-// ✓ Los enlaces/referencias funcionan y abren en nueva pestaña
-// ✓ Las estadísticas se muestran correctamente
-// ✓ El cambio de tema funciona (claro/oscuro)
-// ✓ El botón de copiar funciona y muestra notificación
-// ✓ El botón de mostrar más/menos funciona
-// ✓ Todo usa sintaxis ES2023 (sin var, sin funciones tradicionales)
-// ✓ Template literals para toda interpolación de strings
-// ✓ Arrow functions en todo el código
-// ✓ Destructuring usado donde corresponde
+//
+// FUNCIONALIDAD:
+// ✓ Puedo crear nuevos elementos
+// ✓ Puedo editar elementos existentes
+// ✓ Puedo eliminar elementos
+// ✓ Puedo marcar como activo/inactivo
+// ✓ Los filtros funcionan correctamente
+// ✓ La búsqueda funciona en tiempo real
+// ✓ Las estadísticas se actualizan
+// ✓ Los datos persisten al recargar (localStorage)
+//
+// CÓDIGO:
+// ✓ Uso spread operator para copiar arrays/objetos
+// ✓ Uso array methods (map, filter, reduce, find)
+// ✓ NUNCA muto el estado directamente
+// ✓ Default parameters donde corresponde
+// ✓ Destructuring para extraer propiedades
+// ✓ Template literals para todo el HTML
 // ✓ Comentarios en español
 // ✓ Nomenclatura técnica en inglés
+//
+// DOMINIO:
+// ✓ Adaptado completamente a mi dominio asignado
+// ✓ Categorías específicas de mi dominio
+// ✓ Propiedades adicionales relevantes
+// ✓ Emojis y textos coherentes con el dominio
