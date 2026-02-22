@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libros Usados</title>
+  <link rel="stylesheet" href="styles.css">
+<!-- style-->
+<style>
+.item { margin-bottom: 15px; }
+.item-name { font-weight: bold; }
+.item-category { font-style: italic; color: #555; } 
+.level-bar { background: #eee; height: 10px; width: 100%; } 
+.level-fill { background: #4caf50; height: 10px; } </style>
+
+
+</style>
+</head>
+<body>
+
+  <div class="container">
+<!-- djdjjdjdjdjddjdjdjdjdjjdjdjdj-->
+<head>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // tu código JS aquí
+const library = { 
+name: "bookcycle",
+description: "Comercio digital para vender y comprar libros usados",
+contact: { email: "contactolibros@bookcycle.com",
+phone: "3107690658",
+location: "bogota, colombia"
+ }
+   };
+   // Referencias a los elementos del DOM
+
+   constbook = library.books[0];
+const bookTitle = document.getElementById('bookTitle');
+const bookAuthor = document.getElementById('bookAuthor');
+const bookPrice = document.getElementById('bookPrice');
+const bookDescription = document.getElementById('bookDescription');
+const bookImage = document.getElementById('bookImage');
+const sellerName = document.getElementById('sellerName');
+const sellerLocation = document.getElementById('sellerLocation');
+const bookCondition = document.getElementById('bookCondition');
+const addToCartBtn = document.getElementById('addToCartBtn');
+const buyNowBtn = document.getElementById('buyNowBtn');
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+const relatedBooks = document.getElementById('relatedBooks');
+const reviewsContainer = document.getElementById('reviews');
+
+
+// Función para renderizar la información
+const renderBookInfo = () => {
+
+  const { title, author, price, description, condition, seller: { name, location } } = book;
+  bookTitle.textContent = `${title}`;
+
+  bookAuthor.textContent = `Autor: ${author}`;
+  bookPrice.textContent = `$${price}`;
+
+  bookDescription.innerHTML = `<p>${description}</p>`;
+  bookCondition.textContent = `Condición: ${condition}`;
+  sellerName.textContent = `${name}`;
+  sellerLocation.textContent = `📍 ${location}`;
+};
+;
+
+  const booksToShow = showAll ? books : books.slice(0, 4);
+
+  const itemsHtml = booksToShow.map(item => {
+    const { name, level, category } = item;
+    return `
+      <div class="item">
+        <div class="item-name">${name}</div>
+        <div class="item-category">${category}</div>
+        <div class="item-level">
+          <span>${level}%</span>
+          <div class="level-bar">
+            <div class="level-fill" style="width: ${level}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  booksList.innerHTML = itemsHtml;
+};
+renderBooks();
+
+books: [
+{ title: 'El Principito', author: 'Antoine de Saint-Exupéry', price: 15000, category: 'Infantil' },
+    { title: 'Cien Años de Soledad', author: 'Gabriel García Márquez', price: 25000, category: 'Ficción' },
+    { title: '1984', author: 'George Orwell', price: 20000, category: 'Ficción' },
+    { title: 'Don Quijote', author: 'Miguel de Cervantes', price: 30000, category: 'Clásicos' }
+  ]
+ 
+const itemsList = document.getElementById('skillsList');
+
+const renderRelatedBooks = (showAll = false) => {
+
+  const { relatedBooks } = book;
+  const booksToShow = showAll ? relatedBooks : relatedBooks.slice(0, 4);
+
+  const booksHtml = booksToShow.map(book => {
+    const { title, author, price, image } = book;
+
+    return `
+      <div class="book">
+        <img src="${image}" alt="${title}">
+        <div class="book-title">${title}</div>
+        <div class="book-author">${author}</div>
+        <div class="book-price">$${price}</div>
+      </div>
+    `;
+  }).join('');
+  relatedBooks.innerHTML = booksHtml;
+};
+
+
+    const renderLinks = () => {
+      const { Links } = library;
+      const linksHTML = Links.map(({ platform, url }) => ` <a href="${url}" target="_blank" class="social-link"> ${platform} </a> `).join('');
+      socialLinks.innerHTML = linksHTML;
+    };
+
+    renderLinks();
+
+    const renderStats = () => {
+      const { stats } = library;
+
+      const statsArray = [
+        { label: 'Usuarios Totales', value: stats.totalbooks },
+        { label: 'Usuarios Activos', value: stats.activeUser },
+        { label: 'Transacciones', value: stats.monthySales }
+      ];
+
+      const statsHtml = statsArray.map(stat => ` <div class="stat-item"> <span class="stat-value">${stat.value}</span> <span class="stat-label">${stat.label}</span> </div> `).join('');
+
+      statsContainer.innerHTML = statsHtml;
+    };
+
+    renderStats();
+
+
+  });
+  </script>
+</head>
+<body>
+  <h1 id="entityName"></h1>
+  <h2 id="entityTitle"></h2>
+  <p id="entityLocation"></p>
+  <div id="entityDescription"></div>
+  <p id="userEmail"></p>
+  <p id="userPhone"></p>
+</body>
+
+
+
+
+    <!-- Business Card -->
+    <div class="card" id="businessCard">
+      <!-- Header Section -->
+      <div class="card-header">
+        <div class="avatar">
+          <img src="https://via.placeholder.com/150" alt="Profile Avatar" id="avatarImg">
+        </div>
+        <div class="header-info">
+          <h1 id="userName"></h1>
+          <div id="itemsList"></div>
+          <p class="title" id="userTitle">Library</p>
+          <p class="location" id="userLocation">Bogota, colombia</p>
+        </div>
+      </div>
+
+      <!-- Bio Section -->
+      <div class="card-section">
+        <h2>Admininistacion de dinero/transferencias</h2>
+        <p id="userBio" class="bio">servicio seguro</p>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="card-section">
+        <h2>Contact service</h2>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="icon">📧</span>
+            <span id="userEmail">serviciosfinancieros@payflow.com</span>
+            <button id="copyEmailBtn" class="btn btn-small">Copy</button>
+          </div>
+          <div class="contact-item">
+            <span class="icon">📱</span>
+            <span id="userPhone">3104863989</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills Section -->
+      <div class="card-section">
+        <h2>Skills</h2>
+        <div id="skillsList" class="skills-list">
+          loading...
+        </div>
+        <button id="toggleSkills" class="btn btn-secondary">Show More</button>
+      </div>
+
+      <!-- Social Media Section -->
+      <div class="card-section">
+        <h2>Connect</h2>
+        <div id="socialLinks" class="social-links">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="card-section">
+        <h2>Statistics</h2>
+        <div id="stats" class="stats-grid">
+          Loading...
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Built with ❤️ using ES2023 JavaScript</p>
+      <p class="small">Week 01 Project - JavaScript Modern Bootcamp</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="starter/script.js"></script>
+</body>
+</html>

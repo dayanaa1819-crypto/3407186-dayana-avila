@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- TODO: Cambia el título según tu dominio -->
+  <title>Gestor de Biblioteca | Libros Usados</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container"> 
+    <!--
+      ============================================
+      NOTA PARA EL APRENDIZ:
+      ============================================
+      Este HTML es una plantilla genérica.
+      Debes adaptarlo a tu dominio asignado:
+
+      1. Cambia todos los textos de "Elemento" a tu entidad
+      2. Cambia las categorías por las de tu dominio
+      3. Agrega campos adicionales si tu dominio lo requiere
+      4. Cambia emojis para que sean coherentes con tu dominio
+
+      EJEMPLO (Planetario - NO es un dominio asignable):
+      - "Elementos" → "Cuerpos Celestes"
+      - Categorías: Planeta, Estrella, Asteroide, etc.
+      ============================================
+    -->
+
+    <!-- Header -->
+    <header class="header">
+      <!-- TODO: Cambia el título y emoji según tu dominio -->
+      <h1>📚 Mi Biblioteca De Usados</h1>
+      <p class="subtitle">Gestion de catalogo,activos y precios</p>
+      <div class="stats-summary" id="stats-summary">
+        <span class="stat">Total Libros: <strong id="stat-total">0</strong></span>
+        <!-- TODO: Cambia "Activos/Inactivos" por términos de tu dominio -->
+        <span class="stat">Activos: <strong id="stat-active">0</strong></span>
+        <span class="stat">Inactivos: <strong id="stat-inactive">0</strong></span>
+      </div>
+    </header>
+
+    <!-- Item Form -->
+    <section class="form-section">
+      <!-- TODO: Cambia "Elemento" por tu entidad -->
+      <h2 id="form-title">➕ Nuevo libro</h2>
+      <form id="item-form" class="item-form">
+        <input type="hidden" id="item-id" value="">
+
+        <div class="form-group">
+          <!-- TODO: Cambia el label y placeholder -->
+          <label for="item-name">Titulo del libro *</label>
+          <input
+            type="text"
+            id="item-name"
+            placeholder="Ej: Don Quijote de La Mancha"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="item-author">Autor del libro</label>
+          <input
+            type="text"
+            id="item-author"
+            placeholder="Ej: Miguel de Cervantes"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="item-description">Descripcion del libro</label>
+          <textarea
+            id="item-description"
+            rows="3"
+            placeholder="Estado Activo (opcional)"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <!-- TODO: Cambia las categorías según tu dominio -->
+            <label for="item-category">Categoría</label>
+            <select id="item-category">
+              <!--
+                EJEMPLO Planetario:
+                <option value="planet">🪐 Planeta</option>
+                <option value="star">⭐ Estrella</option>
+                <option value="asteroid">☄️ Asteroide</option>
+              -->
+              <option value="Fiction">📚 Categoría 1</option>
+              <option value="Children">🧸 Categoría 2</option>
+              <option value="Classics">📜 Categoría 3</option>
+              <option value="nonFiction">📖 Categoría 4</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <!-- TODO: Opcionalmente renombra "Prioridad" según tu dominio -->
+            <label for="item-priority">Prioridad De Venta</label>
+            <select id="item-priority">
+              <option value="new">🟢 nuevo</option>
+              <option value="used" selected>🟡 usado</option>
+              <option value="damaged">🔴 dañado</option>
+            </select>
+          </div>
+        </div>
+
+        <!--
+          TODO: Agrega campos adicionales específicos de tu dominio
+          EJEMPLO Planetario:
+        <div class="form-group">
+            <label for="item-magnitude">Magnitud</label>
+            <input type="number" id="item-magnitude" step="0.1">
+          </div>
+        -->
+          <div class="form-group">
+            <label for="item-price">Precio del libro</label>
+            <input type="number" id="item-price" step="0.01">
+          </div>
+        
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            Añadir al catalogo
+          </button>
+          <button type="button" class="btn btn-secondary" id="cancel-btn" style="display: none;">
+            Cancelar Edicion
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Filters & Search -->
+    <section class="filters-section">
+      <div class="filters">
+        <div class="filter-group">
+          <label
+           for="filter-status">Disponibilidad:</label>
+          <select id="filter-status">
+            <option value="all">Todos</option>
+            <!-- TODO: Cambia los términos según tu dominio -->
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filter-category">Categoría:</label>
+          <select id="filter-category">
+            <option value="all">Todos los generos y categorias</option>
+            <!-- TODO: Repite las mismas categorías del formulario -->
+            <option value="Fiction">Ficcion</option>
+            <option value="Children">Infantil</option>
+            <option value="Classics">Clasicos</option>
+            <option value="nonFiction">No Ficcion</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filter-priority">Prioridad:</label>
+          <select id="filter-priority">
+            <option value="new">nuevo</option>
+            <option value="used">usado</option>
+            <option value="damaged">dañado</option>
+          </select>
+        </div>
+
+        <div class="filter-group search-group">
+          <label for="search-input">Buscar Libro:</label>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Titulo o descripcion"
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Item List -->
+    <section class="items-section">
+      <div class="items-header">
+        <!-- TODO: Cambia el título -->
+        <h2>📝 Listado de libros</h2>
+        <button class="btn btn-outline" id="clear-inactive">
+          🗑️ Borrar libros agotados
+        </button>
+      </div>
+
+      <div id="item-list" class="item-list">
+        <!-- Los elementos se renderizarán aquí con JavaScript -->
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <p>📭 No hay libros en la estanderia</p>
+        <p class="empty-state-hint">Registra un libro nuevo para comenzar tu catalogo</p>
+      </div>
+    </section>
+
+    <!-- Detailed Stats -->
+    <section class="detailed-stats">
+      <h3>📊 Resumen de inventario</h3>
+      <div id="stats-details" class="stats-grid">
+        <!-- Las estadísticas se renderizarán aquí con JavaScript -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Script principal -->
+  <script src="starter/script.js"></script>
+</body>
+</html>
