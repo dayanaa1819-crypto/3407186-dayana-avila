@@ -169,10 +169,11 @@ class UsedBook {
    */
   set price(value) {
     // TODO: Implementa el setter con validación
-    if (value <= 0 || isNaN(value)) {
+    const numericPrice =Number(value);
+    if (isNaN(numericPrice) || numericPrice <= 0) {
       throw new Error('El precio debe ser un número positivo');
     }
-   this.#price = parseFloat(value.trim());
+   this.#price = numericPrice;
 
   }
 
@@ -271,9 +272,9 @@ class CollectorBook extends UsedBook {
   #editionYear;
   #isSigned;
 
-constructor(title, author, price, location, editionYear, isSigned) {
+constructor(title, author, price,condition,location, editionYear, isSigned) {
 //llama al constructor de UsedBook
-super(title, author, price,condition , location);
+super(title, author, price, condition, location);
 this.#editionYear = editionYear;
 this.#isSigned = isSigned;
 }
@@ -291,19 +292,70 @@ type: this.getType(), //CollectorBook
 editionYear: this.#editionYear,
 isSigned: this.#isSigned ? 'Sí' : 'No',
 price : this.price,
+location: this.location,
 active: this.isActive
 };
 }
 }
 
 // TODO: Implementa tu segunda clase derivada (Tipo 2)
-// class ItemType2 extends BaseItem { ... }
+class Textbook extends UsedBook {
+  #subject;
+  #gradeLevel;
+
+  constructor(title, author, price, condition, location, subject, gradeLevel) {
+    super(title, author, price, condition, location);
+    this.#subject = subject;
+    this.#gradeLevel = gradeLevel;
+  }
+
+  get subject() { return this.#subject; }
+  get gradeLevel() { return this.#gradeLevel; }
+
+  getInfo() {
+    return {
+      id: this.id,
+      title: this.title,
+      type: this.getType(), //Textbook
+      subject: this.#subject,
+      gradeLevel: this.#gradeLevel,
+      price : this.price,
+      condition : this.condition,
+      active: this.isActive
+    };
+  }
+}
 
 // TODO: Implementa tu tercera clase derivada (Tipo 3)
-// class ItemType3 extends BaseItem { ... }
+class RareEdition extends UsedBook {
+  #printNumber;
+  #totalPrints;
+
+  constructor(title,author, price, condition, location, printNumber, totalPrints) {
+  super(title, author, price, condition, location);
+  this.#printNumber = printNumber;
+  this.#totalPrints = totalPrints;
+  }
+  
+  get printNumber() { return this.#printNumber; }
+  get totalPrints() { return this.#totalPrints; }
+
+getInfo() {
+  return {
+    id: this.id,
+    title: this.title,
+    type: this.getType(), //RareEdition
+    printNumber: this.#printNumber,
+    totalPrints: this.#totalPrints,
+    isLimitedEdition: this.#printNumber <= 100 ? 'Sí' : 'No',
+    price : this.price,
+    active: this.isActive
+  };
+}
+}
 
 // ============================================
-// TODO 3: CLASE PERSON - Base para usuarios
+// TODO 3: CLASE PERSON - Base para usuarios del sistema E-commerce 
 // ============================================
 /**
  * Clase base para todos los usuarios del sistema.
@@ -311,47 +363,61 @@ active: this.isActive
  * EJEMPLO (Planetario - NO asignable):
  * Person → Visitor (visitante), Astronomer (astrónomo)
  */
-class Person {
+  class Person {
   // TODO: Declara campos privados
-  // #id;
-  // #name;
-  // #email;
-  // #registrationDate;
+  #id;
+  #name;
+  #email;
+  #registrationDate;
+  /** 
 
-  constructor(name, email) {
+  *constructor de la clase Person
+  *@param{string}name - Nombre del usuario
+  *@param{string}email -Email del usuario
+*/
+
+  constructor(name, email) 
+   {
     // TODO: Inicializa los campos
-    // this.#id = crypto.randomUUID();
-    // this.#name = name;
-    // this.#email = email;
-    // this.#registrationDate = new Date().toISOString();
+    this.#id = crypto.randomUUID();
+    this.#name = name;
+    this.#email = email; //Usamos el setter para validar desde el inicio
+    this.#registrationDate = new Date().toISOString();
   }
 
   // TODO: Implementa getters
-  get id() {}
-  get name() {}
-  get email() {}
-  get registrationDate() {}
+  get id() { return this.#id; }
+  get name() { return this.#name; }
+  get email() { return this.#email; }
+  get registrationDate() { return this.#registrationDate; }
 
   // TODO: Implementa setter con validación de email
+  /**
+   * @param {string} value - Nuevo email del usuario
+   */
   set email(value) {
     // Valida formato de email usando regex
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(value)) {
-    //   throw new Error('Formato de email inválido');
-    // }
-    // this.#email = value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+    throw new Error('Formato de email inválido');
+    }
+    this.#email = value;
   }
 
   /**
    * Retorna la información básica del usuario
    */
+/**
+ * @returns {Object}Datos publicos del usuario
+ */
   getInfo() {
-    // return {
-    //   id: this.#id,
-    //   name: this.#name,
-    //   email: this.#email,
-    //   registrationDate: this.#registrationDate
-    // };
+    return {
+      id: this.#id,
+      name: this.#name,
+      email: this.#email,
+      registrationDate: this.#registrationDate,
+      userType: this.constructor.name // Identifica si es Customer o Seller
+    };
   }
 }
 
@@ -398,34 +464,79 @@ class Person {
  */
 
 // TODO: Implementa tu primer rol de usuario
-// class UserRole1 extends Person { ... }
+class Customer extends Person {
+  #shippingAddress;
+  #purchaseCount=0;
+
+  constructor(name, email, shippingAddress) {
+    super(name, email);
+    this.#shippingAddress = shippingAddress;
+  }
+
+  addPurchase() {
+    this.#purchaseCount++;
+  }
+
+  get purchaseCount() { return this.#purchaseCount; }
+
+  getInfo() {
+    return {
+      ...super.getInfo(),
+      address: this.#shippingAddress,
+      purchaseCount: this.#purchaseCount,
+      role: 'Customer'
+    };
+  }
+}
 
 // TODO: Implementa tu segundo rol de usuario
-// class UserRole2 extends Person { ... }
+class Seller extends Person {
+  #rating;
+  #activeListings = 0;
 
-// ============================================
+  constructor(name, email, rating =5) {
+    super(name, email);
+    this.#rating = rating;
+  }
+  get rating() { return this.#rating; }
+ 
+  updateListings(count) {
+  if (count <0) throw new Error("La cantidad de libros no puede ser negativa");
+  this.#activeListings = count;
+  }
+  getInfo() {
+   return{
+     ...super.getInfo(),
+    rating: this.#rating,
+    activeBooks: this.#activeListings,
+    role: 'Seller'
+   };
+  } 
+}
+
+  // ============================================
 // TODO 5: CLASE PRINCIPAL DEL SISTEMA
 // ============================================
 /**
- * Clase principal que gestiona todos los elementos y usuarios.
+ * Clase principal que gestiona todos el inventario de libros y la base de usuarios.
  * Utiliza static blocks para configuración inicial.
  *
  * EJEMPLO (Planetario - NO asignable):
  * class Observatory { ... }
  */
 class MainSystem {
-  // Campos privados para almacenar datos
-  #items = [];
-  #users = [];
+  // Campos privados para almacenar datos E-commerce
+  #items = []; //lista de UsedBook
+  #users = []; //lista de Person (Customers y Sellers)
   #transactions = [];
 
   // TODO: Implementa un static block para configuración
   static {
     // Este bloque se ejecuta cuando la clase se carga
-    // this.VERSION = '1.0.0';
-    // this.MAX_ITEMS = 1000;
-    // this.SYSTEM_NAME = 'Mi Sistema'; // Cambia por tu dominio
-    // console.log(`Sistema ${this.SYSTEM_NAME} v${this.VERSION} cargado`);
+    this.VERSION = '1.0.0';
+    this.MAX_ITEMS = 500; //limite maxima de items en el sistema
+    this.SYSTEM_NAME = 'Relatos Usados E-commerce'; // Cambia por tu dominio
+    console.log(`Sistema ${this.SYSTEM_NAME} v${this.VERSION} cargado correctamente`);
   }
 
   // TODO: Implementa métodos estáticos de utilidad
@@ -435,7 +546,7 @@ class MainSystem {
    * @returns {boolean} Si es válido
    */
   static isValidId(id) {
-    // return typeof id === 'string' && id.length > 0;
+    return typeof id === 'string' && id.length > 0;
   }
 
   /**
@@ -443,7 +554,7 @@ class MainSystem {
    * @returns {string} ID único
    */
   static generateId() {
-    // return crypto.randomUUID();
+    return crypto.randomUUID();
   }
 
   // ============================================
@@ -451,35 +562,35 @@ class MainSystem {
   // ============================================
 
   /**
-   * Agrega un nuevo elemento al sistema
+   * Agrega un libro al inventario con validacion de tipo y limite al sistema
    * @param {BaseItem} item - Elemento a agregar
    * @returns {Object} Resultado de la operación
    */
   addItem(item) {
     // TODO: Implementa la adición con validación
-    // if (!(item instanceof BaseItem)) {
-    //   return { success: false, message: 'El item debe ser instancia de BaseItem' };
-    // }
-    // if (this.#items.length >= MainSystem.MAX_ITEMS) {
-    //   return { success: false, message: 'Límite de items alcanzado' };
-    // }
-    // this.#items.push(item);
-    // return { success: true, message: 'Item agregado correctamente', item };
+  if (!(item instanceof UsedBook)) {
+  return { success: false, message: 'El item debe ser instancia de UsedBook' };
+    }
+  if (this.#items.length >= MainSystem.MAX_ITEMS) {
+     return { success: false, message: 'Inventario lleno' };
+    }
+    this.#items.push(item);
+   return { success: true, message: `Libro "${item.name}" agregado correctamente`, item };
   }
 
   /**
-   * Elimina un elemento por su ID
+   * Elimina un libro del catalogo por su ID
    * @param {string} id - ID del elemento a eliminar
    * @returns {Object} Resultado de la operación
    */
   removeItem(id) {
     // TODO: Implementa la eliminación
-    // const index = this.#items.findIndex(item => item.id === id);
-    // if (index === -1) {
-    //   return { success: false, message: 'Item no encontrado' };
-    // }
-    // const removed = this.#items.splice(index, 1)[0];
-    // return { success: true, message: 'Item eliminado', item: removed };
+    const index = this.#items.findIndex(item => item.id === id);
+    if (index === -1) {
+      return { success: false, message: 'libro no encontrado' }
+    }
+    const removed = this.#items.splice(index, 1)[0];
+    return { success: true, message: `Libro "${removed.title}" eliminado correctamente` };
   }
 
   /**
@@ -489,7 +600,7 @@ class MainSystem {
    */
   findItem(id) {
     // TODO: Implementa la búsqueda
-    // return this.#items.find(item => item.id === id) ?? null;
+    return this.#items.find(item => item.id === id) ?? null;
   }
 
   /**
@@ -498,7 +609,8 @@ class MainSystem {
    */
   getAllItems() {
     // Retorna copia para evitar mutación directa
-    // return [...this.#items];
+    //(Encapsulamiento)
+    return [...this.#items];
   }
 
   // ============================================
@@ -512,10 +624,10 @@ class MainSystem {
    */
   searchByName(query) {
     // TODO: Implementa búsqueda case-insensitive
-    // const searchTerm = query.toLowerCase();
-    // return this.#items.filter(item =>
-    //   item.name.toLowerCase().includes(searchTerm)
-    // );
+    const searchTerm = query.toLowerCase();
+    return this.#items.filter(item =>
+    item.name.toLowerCase().includes(searchTerm)
+    );
   }
 
   /**
@@ -524,8 +636,8 @@ class MainSystem {
    * @returns {Array} Elementos del tipo especificado
    */
   filterByType(type) {
-    // TODO: Implementa el filtro por tipo
-    // return this.#items.filter(item => item.getType() === type);
+    // TODO: Implementa el filtro por CollectorBook,Textbook o RareEdition
+    return this.#items.filter(item => item.getType() === type);
   }
 
   /**
@@ -535,7 +647,7 @@ class MainSystem {
    */
   filterByStatus(active) {
     // TODO: Implementa el filtro por estado
-    // return this.#items.filter(item => item.isActive === active);
+     return this.#items.filter(item => item.isActive === active);
   }
 
   // ============================================
@@ -548,24 +660,24 @@ class MainSystem {
    */
   getStats() {
     // TODO: Implementa el cálculo de estadísticas usando reduce
-    // const total = this.#items.length;
-    // const active = this.#items.filter(item => item.isActive).length;
-    // const inactive = total - active;
-    //
+    const total = this.#items.length;
+    const active = this.#items.filter(item => item.isActive).length;
+    const inactive = total - active;
+    
     // // Contar por tipo usando reduce
-    // const byType = this.#items.reduce((acc, item) => {
-    //   const type = item.getType();
-    //   acc[type] = (acc[type] ?? 0) + 1;
-    //   return acc;
-    // }, {});
+    const byType = this.#items.reduce((acc, item) => {
+    const type = item.getType();
+    acc[type] = (acc[type] ?? 0) + 1;
+    return acc;
+    }, {});
     //
-    // return {
-    //   total,
-    //   active,
-    //   inactive,
-    //   byType,
-    //   users: this.#users.length
-    // };
+    return {
+    totalBooks: total,
+    available: active,
+    byCategory: byType,
+    totalUsers: this.#users.length
+    };
+
   }
 
   // ============================================
@@ -578,11 +690,11 @@ class MainSystem {
    */
   addUser(user) {
     // TODO: Implementa el registro de usuario
-    // if (!(user instanceof Person)) {
-    //   return { success: false, message: 'Debe ser instancia de Person' };
-    // }
-    // this.#users.push(user);
-    // return { success: true, message: 'Usuario registrado' };
+  if (!(user instanceof Person)) {
+    return { success: false, message: 'Debe ser instancia de Person' };
+  }
+  this.#users.push(user);
+  return { success: true, message: `Usuario ${user.name} registrado` };
   }
 
   /**
@@ -591,11 +703,11 @@ class MainSystem {
    * @returns {Person|null} Usuario encontrado o null
    */
   findUserByEmail(email) {
-    // return this.#users.find(user => user.email === email) ?? null;
+    return this.#users.find(user => user.email === email) ?? null;
   }
 
   getAllUsers() {
-    // return [...this.#users];
+    return [...this.#users];
   }
 }
 
@@ -613,74 +725,107 @@ class MainSystem {
 // system.addItem(jupiter);
 // system.addItem(sol);
 
+
+const system = new MainSystem();
+
+const book1 = new CollectorBook('Cien años de soledad', 'Gabriel Garcia Marquez', 150, 'Excelente', 'Vitrina A', 1967, true);
+const book2 = new Textbook('Fisica Universitaria', 'Sears y Zemansky', 80, 'Bueno', 'Vitrina B', 2020, true);
+const book3 = new RareEdition('El principito', 'Antoine de Saint-Exupéry', 100, 'Fragil', 'Vitrina C', 1943, true);
+
+console.log(system.addItem(book1).message);
+console.log(system.addItem(book2).message);
+console.log(system.addItem(book3).message);
+
+const cliente1 = new Customer( 'Juan Perez', 'juan@email.com', 'Calle Falsa 123');
+const vendedor1 = new Seller('Libreria de antaño','contacto@libros.com', 5);
+
+console.log(system.addUser(cliente1).message);
+console.log(system.addUser(vendedor1).message);
+
+console.log("\n--- Reporte Estadisticas Finales ---");
+console.dir(system.getStats());
+
+console.log("\n--- Buscando 'Física' ---");
+const resultadosBusqueda = system.searchByTitle("Física");
+console.log(resultadosBusqueda.map(b => b.getInfo()));
+
 // ============================================
 // TODO 7: REFERENCIAS AL DOM
 // ============================================
 
 // TODO: Obtén referencias a los elementos del DOM
-// const itemForm = document.getElementById('item-form');
-// const itemList = document.getElementById('item-list');
-// const statsContainer = document.getElementById('stats');
-// const filterType = document.getElementById('filter-type');
-// const filterStatus = document.getElementById('filter-status');
-// const searchInput = document.getElementById('search-input');
+const itemForm = document.getElementById('item-form');
+const itemList = document.getElementById('item-list');
+const statsContainer = document.getElementById('stats');
+const filterType = document.getElementById('filter-type'); //Por catalogo (Texto,Coleccion,etc.)
+const filterStatus = document.getElementById('filter-status'); //Por estado (Activo/Inactivo)
+const searchInput = document.getElementById('search-input');
 
 // ============================================
 // TODO 8: FUNCIONES DE RENDERIZADO
 // ============================================
 
 /**
- * Renderiza un elemento individual
- * @param {BaseItem} item - Elemento a renderizar
+ * Renderiza un libro individual como una tarjeta HTML
+ * @param {UsedBook} item - Instancia de libro a renderizar
  * @returns {string} HTML del elemento
  */
 const renderItem = item => {
   // TODO: Implementa usando template literals
-  // const info = item.getInfo();
-  // return `
-  //   <div class="item ${item.isActive ? '' : 'inactive'}" data-id="${item.id}">
-  //     <div class="item-header">
-  //       <h3>${item.name}</h3>
-  //       <span class="badge">${item.getType()}</span>
-  //     </div>
-  //     <div class="item-details">
-  //       <p>Ubicación: ${item.location}</p>
-  //       <p>Estado: ${item.isActive ? 'Activo' : 'Inactivo'}</p>
-  //     </div>
-  //     <div class="item-actions">
-  //       <button class="btn-toggle" data-id="${item.id}">
-  //         ${item.isActive ? 'Desactivar' : 'Activar'}
-  //       </button>
-  //       <button class="btn-delete" data-id="${item.id}">Eliminar</button>
-  //     </div>
-  //   </div>
-  // `;
+  const info = item.getInfo();
+  return `
+  <div class="card ${item.isActive ? '' : 'inactive'}" data-id="${item.id}">
+    <div class="card-header">
+         <h3>${item.title}</h3>
+         <span class="badge">${item.getType()}</span>
+       </div>
+     <div class="card-body">
+        <p></strong>Autor:</strong> ${item.author}</p>
+        <p></strong>Precio:</strong> ${item.price}</p>
+ ${info.editionYear ? '<p><strong>Año:</strong> ' + info.editionYear + '</p>' : ""}
+       <div class="item-details">
+         <p></strong>Ubicación:</strong> ${item.location}</p>
+         <p></strong>Estado:</strong> ${item.isActive ? 'Activo' : 'Inactivo'}</p>
+       </div>
+       <div class="card-actions">
+         <button class="btn-toggle" data-id="${item.id}">
+           ${item.isActive ? 'Desactivar' : 'Activar'}
+         </button>
+         <button class="btn-delete" data-id="${item.id}">Eliminar</button>
+       </div>
+     </div>';
+     card
+   `;
 };
 
 /**
- * Renderiza la lista completa de elementos
- * @param {Array} items - Array de elementos
+ * Renderiza la lista completa de libros
+ * @param {Array} items - Array de instancias de libros
  */
 const renderItems = (items = []) => {
   // TODO: Implementa el renderizado de la lista
-  // if (items.length === 0) {
-  //   itemList.innerHTML = '<p class="empty">No hay elementos</p>';
-  //   return;
-  // }
-  // itemList.innerHTML = items.map(renderItem).join('');
+  if (items.length === 0) {
+     itemList.innerHTML = '<p class="empty">No hay libros en el catalogo que coincidan</p>';
+     return;
+   }
+  itemList.innerHTML = items.map(renderItem).join('');
 };
 
 /**
- * Renderiza las estadísticas
- * @param {Object} stats - Objeto de estadísticas
+ * Renderiza el resumen de estadísticas en el panel superior
+ * @param {Object} stats - Objeto de estadísticas generado por MainSystem
  */
 const renderStats = stats => {
   // TODO: Implementa el renderizado de estadísticas
-  // statsContainer.innerHTML = `
-  //   <div class="stat">Total: ${stats.total}</div>
-  //   <div class="stat">Activos: ${stats.active}</div>
-  //   <div class="stat">Inactivos: ${stats.inactive}</div>
-  // `;
+  const available = stats.available;
+  const total = stats.totalBooks;
+  const inactive = total - available;
+   statsContainer.innerHTML = `
+     <div class="stat">Total libros: ${stats.totalBooks}</div>
+     <div class="stat">Activos: ${available}</div>
+     <div class="stat">Inactivos: ${inactive}</div>
+     <div class="stat">Usuarios: ${stats.totalUsers}</div>
+   `;
 };
 
 // ============================================
@@ -688,25 +833,65 @@ const renderStats = stats => {
 // ============================================
 
 /**
- * Maneja el envío del formulario
+ * Maneja el envío del formulario para crear nuevos libros
  */
 const handleFormSubmit = e => {
   // TODO: Implementa la creación de nuevos elementos
-  // e.preventDefault();
+  e.preventDefault(); //Evita que la pagina se recargue
   // Obtén valores del formulario
-  // Crea instancia de la clase correcta según el tipo seleccionado
-  // Agrega al sistema
-  // Re-renderiza
-};
+constformData = new FormData(itemForm);
+const type = formData.get('type'); //El tipo de libro seleccionado
 
+const formData = new FormData(itemForm);
+const title = formData.get('title');
+const author = formData.get('author');
+const price = Number(formData.get('price'));
+const condition = formData.get('condition');
+const location = formData.get('location');
+
+// Crea instancia de la clase correcta según el tipo seleccionado
+if(type ==='CollectorBook') {
+ newBook = new CollectorBook(title,author,price,condition,location,2024,true);
+} else if(type ==='Textbook') {
+   newBook = new Textbook(title,author,price,condition,location,'General','Unico');
+} else{
+   newBook = new RareEdition(title,author,price,condition,location,1,100);
+} 
+  // Agrega al sistema
+
+  system.addItem(newBook);
+
+  // Re-renderiza(Actualiza la vista y las estadisticas)
+  handleFilterChange();
+  renderStats(system.getStats());
+  itemForm.reset(); //Limpia el formulario despues de agregar
+};
 /**
  * Maneja cambios en los filtros
  */
 const handleFilterChange = () => {
   // TODO: Implementa el filtrado
-  // let filtered = system.getAllItems();
+  let filtered = system.getAllItems();
   // Aplica filtros según los valores de los selectores
-  // renderItems(filtered);
+  //Filtramos por tipo de libro
+  if (filterType.value!=='all') {
+  filtered=
+  system.filterByType(filterType.value);
+  }
+ //Filtramos por estado(activo/inactivo)
+ if(filterStatus.value!=='all') {
+  const activeSearch =(filterStatus.value==='active');
+  filtered = filtered.filter(item => item.isActive === activeSearch); 
+ }
+// Filtro por texto de búsqueda (Título o Autor)
+  const query = searchInput.value.toLowerCase();
+  if (query) {
+    filtered = filtered.filter(item => 
+      item.title.toLowerCase().includes(query) || 
+      item.author.toLowerCase().includes(query)
+    );
+  }
+  //renderItems(filtered);
 };
 
 /**
@@ -714,24 +899,26 @@ const handleFilterChange = () => {
  */
 const handleItemAction = e => {
   // TODO: Implementa usando event delegation
-  // const target = e.target;
-  // const itemId = target.dataset.id;
-  // if (!itemId) return;
-  //
-  // if (target.classList.contains('btn-toggle')) {
-  //   const item = system.findItem(itemId);
-  //   if (item.isActive) item.deactivate();
-  //   else item.activate();
-  // }
-  //
-  // if (target.classList.contains('btn-delete')) {
-  //   if (confirm('¿Eliminar este elemento?')) {
-  //     system.removeItem(itemId);
-  //   }
-  // }
-  //
-  // handleFilterChange();
-  // renderStats(system.getStats());
+  const target = e.target;
+   const itemId = target.dataset.id; //Sacamos el ID del boton que tocaron
+   if (!itemId) return;
+  
+   //Boton activar/ desactivar
+   if (target.classList.contains('btn-toggle')) {
+     const item = system.findItem(itemId);
+     if (item.isActive) item.deactivate(); //Si esta activo,lo apaga
+     else item.activate(); //Si esta apagado lo activa
+   }
+  
+   //Boton eliminar
+   if (target.classList.contains('btn-delete')) {
+     if (confirm('¿Eliminar este libro permanentemente?')) {
+       system.removeItem(itemId);
+     }
+   }
+  //Actualizamos la pantalla despues de cualquier cambio
+  handleFilterChange();
+   renderStats(system.getStats());
 };
 
 // ============================================
@@ -739,11 +926,16 @@ const handleItemAction = e => {
 // ============================================
 
 // TODO: Adjunta los event listeners
-// itemForm.addEventListener('submit', handleFormSubmit);
-// filterType.addEventListener('change', handleFilterChange);
-// filterStatus.addEventListener('change', handleFilterChange);
-// searchInput.addEventListener('input', handleFilterChange);
-// itemList.addEventListener('click', handleItemAction);
+//Escucha cuando se envia al formulario para agregar un nuevo libro
+itemForm.addEventListener('submit', handleFormSubmit);
+//Escucha cambios en el selector de tipo (Coleccion,Texto,Raro,etc.)
+filterType.addEventListener('change', handleFilterChange);
+//Escucha cambios en el selector de estados(activo7inactivo)
+filterStatus.addEventListener('change', handleFilterChange);
+//Escucha cuando el usuario escriba en la barra de busqueda
+searchInput.addEventListener('input', handleFilterChange);
+//Escucha los clicks en la lista de libros (para botones de Eliminar/Desactivar)
+itemList.addEventListener('click', handleItemAction);
 
 // ============================================
 // TODO 11: INICIALIZACIÓN
@@ -754,9 +946,12 @@ const handleItemAction = e => {
  */
 const init = () => {
   // TODO: Implementa la inicialización
-  // renderItems(system.getAllItems());
-  // renderStats(system.getStats());
-  // console.log('✅ Sistema inicializado correctamente');
+  //Renderiza los libros que ya estan en el sistema (Si es que hay datos de prueba)
+  renderItems(system.getAllItems());
+  //Renderiza las estadisiticas iniciales
+  renderStats(system.getStats());
+  //Confirmacion en consola
+  console.log('✅ Sistema de Libros Usados inicializado correctamente');
 };
 
 // Ejecutar cuando el DOM esté listo

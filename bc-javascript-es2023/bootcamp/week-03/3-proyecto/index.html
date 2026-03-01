@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- TODO: Cambia el título según tu dominio -->
-    <title>📦 Sistema de Gestión | Tu Dominio</title>
+    <title>📚 Libros Usados | Sistema de Gestion</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -30,8 +30,8 @@
       <!-- Header -->
       <header class="header">
         <!-- TODO: Cambia el título y emoji según tu dominio -->
-        <h1>📦 Sistema de Gestión</h1>
-        <p class="subtitle">Adaptado a tu dominio asignado</p>
+        <h1>📚 Libros Usados | Sistema de Gestion</h1>
+        <p class="subtitle">E-commerce de Gestion de libros usados</p>
       </header>
 
       <!-- Navigation Tabs -->
@@ -44,7 +44,7 @@
           👥 Usuarios
         </button>
         <button class="tab-btn" data-tab="transactions">
-          🔄 Transacciones
+          🔄 Ventas
         </button>
         <button class="tab-btn" data-tab="stats">
           📊 Estadísticas
@@ -56,33 +56,33 @@
         <!-- Catalog Tab -->
         <section id="catalog" class="tab-panel active">
           <div class="panel-header">
-            <h2>📋 Catálogo de Elementos</h2>
+            <h2>📋 Catálogo de Libros</h2>
             <div class="actions">
               <input
                 type="text"
                 id="search-input"
-                placeholder="Buscar por nombre..."
+                placeholder="Buscar titulo o author..."
               />
               <!-- TODO: Adapta los tipos a tu dominio -->
               <select id="filter-type">
-                <option value="all">Todos los tipos</option>
+                <option value="all">Todas las categorias</option>
                 <!--
                   EJEMPLO Planetario:
                   <option value="Planet">Planetas</option>
                   <option value="Star">Estrellas</option>
                   <option value="Satellite">Satélites</option>
                 -->
-                <option value="ItemType1">Tipo 1</option>
-                <option value="ItemType2">Tipo 2</option>
-                <option value="ItemType3">Tipo 3</option>
+                <option value="CollectorBook">Ediciones de coleccion</option>
+                <option value="TextBook">Libros de texto</option>
+                <option value="RareEdition">Ediciones raras</option>
               </select>
               <select id="filter-status">
-                <option value="all">Todos</option>
-                <option value="active">Activos</option>
-                <option value="inactive">Inactivos</option>
+                <option value="all">Cualquier estado</option>
+                <option value="active">Disponibles</option>
+                <option value="inactive">Vendidos o retirados</option>
               </select>
               <button id="add-item-btn" class="btn btn-primary">
-                + Agregar
+                + Agregar libro
               </button>
             </div>
           </div>
@@ -90,8 +90,8 @@
             <!-- Los elementos se renderizarán aquí con JavaScript -->
           </div>
           <div id="empty-state" class="empty-state" style="display: none;">
-            <p>📭 No hay elementos en el catálogo</p>
-            <p class="hint">Agrega tu primer elemento usando el botón superior</p>
+            <p>📭 No hay libros en el catálogo</p>
+            <p class="hint">Agrega tu primer libro usando el botón superior</p>
           </div>
         </section>
 
@@ -108,8 +108,8 @@
               <!-- TODO: Adapta los roles a tu dominio -->
               <select id="filter-role">
                 <option value="all">Todos los roles</option>
-                <option value="UserRole1">Rol 1</option>
-                <option value="UserRole2">Rol 2</option>
+                <option value="Customer">Cliente</option>
+                <option value="Seller">Vendedor</option>
               </select>
               <button id="add-user-btn" class="btn btn-primary">
                 + Agregar Usuario
@@ -140,15 +140,15 @@
           <div id="stats-container" class="stats-grid">
             <div class="stat-card">
               <span class="stat-value" id="stat-total">0</span>
-              <span class="stat-label">Total Elementos</span>
+              <span class="stat-label">Total libros</span>
             </div>
             <div class="stat-card">
               <span class="stat-value" id="stat-active">0</span>
-              <span class="stat-label">Activos</span>
+              <span class="stat-label">Disponibles</span>
             </div>
             <div class="stat-card">
               <span class="stat-value" id="stat-inactive">0</span>
-              <span class="stat-label">Inactivos</span>
+              <span class="stat-label">Vendidos o retirados</span>
             </div>
             <div class="stat-card">
               <span class="stat-value" id="stat-users">0</span>
@@ -165,31 +165,46 @@
       <div id="item-modal" class="modal" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
-            <h3 id="modal-title">Agregar Elemento</h3>
+            <h3 id="modal-title">Agregar libro</h3>
             <button class="close-btn" id="close-modal">&times;</button>
           </div>
           <form id="item-form" class="modal-form">
             <!-- Selector de tipo -->
             <div class="form-group">
-              <label for="item-type">Tipo de Elemento</label>
+              <label for="item-type">Tipo de Libro</label>
               <select id="item-type" required>
                 <!-- TODO: Adapta los tipos a tu dominio -->
                 <option value="">Selecciona un tipo</option>
-                <option value="ItemType1">Tipo 1</option>
-                <option value="ItemType2">Tipo 2</option>
-                <option value="ItemType3">Tipo 3</option>
+                <option value="CollectorBook">Coleccion</option>
+                <option value="TextBook">Libro de Texto</option>
+                <option value="RareEdition">Edicion rara</option>
               </select>
             </div>
 
             <!-- Campos base -->
             <div class="form-group">
-              <label for="item-name">Nombre *</label>
-              <input type="text" id="item-name" required />
+              <label for="item-title">Título *</label>
+              <input type="text" id="item-title" name="title" required />
+            </div>
+
+            <div class="form-group">
+              <label for="item-author">Autor *</label>
+              <input type="text" id="item-author" name="author" required />
+            </div>
+
+            <div class="form-group">
+              <label for="item-price">Precio *</label>
+              <input type="number" id="item-price" name="price" step="0.01" required />
             </div>
 
             <div class="form-group">
               <label for="item-location">Ubicación *</label>
-              <input type="text" id="item-location" required />
+              <input type="text" id="item-location" name="location" required />
+            </div>
+
+            <div class="form-group">
+              <label for="item-condition">Condición *</label>
+              <input type="text" id="item-condition" name="condition" placeholder="Ej: Bueno, Desgastado" required />
             </div>
 
             <!--
@@ -201,7 +216,7 @@
             </div>
 
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="submit" class="btn btn-primary">Guardar libro</button>
               <button type="button" class="btn btn-secondary" id="cancel-btn">
                 Cancelar
               </button>
@@ -214,27 +229,31 @@
       <div id="user-modal" class="modal" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
-            <h3>Agregar Usuario</h3>
+            <h3>Registrar Usuarios en Libros Usados</h3>
             <button class="close-btn" id="close-user-modal">&times;</button>
           </div>
           <form id="user-form" class="modal-form">
             <div class="form-group">
-              <label for="user-role">Rol</label>
+              <label for="user-role">Rol del Usuario</label>
               <select id="user-role" required>
                 <option value="">Selecciona un rol</option>
-                <option value="UserRole1">Rol 1</option>
-                <option value="UserRole2">Rol 2</option>
+                <option value="Customer">Cliente (Comprador)</option>
+                <option value="Seller">Vendedor (Libreria)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="user-name">Nombre *</label>
-              <input type="text" id="user-name" required />
+              <label for="user-name">Nombre Completo*</label>
+              <input type="text" id="user-name"
+              name="name" placeholder="Ej: Juan Pérez"
+              required />
             </div>
 
             <div class="form-group">
-              <label for="user-email">Email *</label>
-              <input type="email" id="user-email" required />
+              <label for="user-email">Correo Electronico*</label>
+              <input type="email" id="user-email"
+              name="email" placeholder="Ej: juan.perez@correo.com" 
+              required />
             </div>
 
             <div class="form-actions">
