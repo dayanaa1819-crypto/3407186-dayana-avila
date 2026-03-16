@@ -82,7 +82,7 @@ console.log('Valor principal:    ', 25000);
 //   Precio con 20% descuento:  15000 * 0.8
 //   Total (cantidad × precio): 3 * 15000
 //   Capacidad restante:        30 - 12
-console.log('Valor calculado:    ', 25000 * 1.10); // TODO: reemplaza 0 con tu cálculo
+console.log('Valor calculado:    ', 2500 * 1.10); // TODO: reemplaza 0 con tu cálculo
 
 // TODO: Valor boolean que representa un estado de la entidad (true o false — sin comillas)
 // Ejemplos: disponible → true, enStock → false, esNuevo → true
