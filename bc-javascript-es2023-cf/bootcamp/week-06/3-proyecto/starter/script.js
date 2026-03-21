@@ -26,101 +26,101 @@
 // TODO: Define al menos 6 elementos de tu dominio
 // Reemplaza el nombre de la constante por algo representativo:
 // (ej: books, medicines, machines, dishes, patients...)
-const items = [
-  // TODO: Agrega tus elementos aquí
+ // TODO: Agrega tus elementos aquí
   // { name: "nombre del elemento", category: "categoría", value: 0 }
+// 1. Array de objetos: Definimos 6 libros con su categoría y precio
+const books = [
+  { name: "El Principito", category: "Infantil", value: 12.50 },
+  { name: "Cien años de soledad", category: "Ficción", value: 25.00 },
+  { name: "Drácula", category: "Terror", value: 18.75 },
+  { name: "Harry Potter", category: "Infantil", value: 30.00 },
+  { name: "IT (Eso)", category: "Terror", value: 22.00 },
+  { name: "Breve historia del tiempo", category: "Académico", value: 15.20 }
 ];
-
 // TODO: Define las categorías relevantes para tu dominio
 // (ej: para Biblioteca sería ["ficción", "no-ficción", "ciencia"])
-const categories = [
-  // TODO: lista tus categorías
-];
+const categories = ["Infantil", "Ficción", "Terror", "Académico"];
 
 // TODO: Define un nombre descriptivo para el valor numérico
 // (ej: "páginas", "stock", "horas de uso", "precio", "duración")
-const valueLabel = "valor"; // ← cambiar
+const valueLabel = "precio"; 
+
+console.log(`✅ Inventario de ${books.length} libros cargados.`);
 
 // ============================================
 // SECCIÓN 2: Listado completo con for...of
 // ============================================
-console.log("=== LISTADO COMPLETO ===");
-
-// TODO: Usa for...of para imprimir cada elemento
-// Formato sugerido: "1. [nombre] — [categoría] — [valueLabel]: [value]"
-// Pista: usa una variable externa para el contador de número de línea
+console.log("=== LISTADO COMPLETO DE LIBROS ===");
 let lineNumber = 0;
-
-for (const item of items) {
+for (const book of books) {
   lineNumber++;
-  // TODO: Reemplaza este console.log con la información de tu dominio
-  console.log(`${lineNumber}. ${item.name}`);
+  console.log(`${lineNumber}. ${book.name} — ${book.category} — ${valueLabel}: $${book.value}`);
 }
 
 console.log("");
-
+// ============================================
+// SECCIÓN 3: Contadores por categoría
+// ============================================
 // ============================================
 // SECCIÓN 3: Contadores por categoría
 // ============================================
 console.log("=== CONTEO POR CATEGORÍA ===");
-
-// TODO: Para cada categoría, cuenta cuántos elementos tiene
-// Pista: usa un for...of exterior (categorías) con un contador
-//        y un for...of interior (items) para contar
-
 for (const category of categories) {
   let count = 0;
+  for (const book of books) {
+    if (book.category === category) {
+      count++; 
+    }
+  }
+  console.log(`${category}: ${count} libro(s)`);
+}
+
+console.log("");
 
   // TODO: Completa el bucle para contar items de esta categoría
   // for (const item of items) {
   //   if (item.category === category) count++;
   // }
-
-  console.log(`${category}: ${count} elemento(s)`);
-}
-
-console.log("");
-
 // ============================================
 // SECCIÓN 4: Totales y promedio (acumulador)
 // ============================================
-console.log("=== ESTADÍSTICAS ===");
-
-// TODO: Inicializa el acumulador correctamente
+// ============================================
+// SECCIÓN 4: Totales y promedio (acumulador)
+// ============================================
+console.log("=== ESTADÍSTICAS ECONÓMICAS ===");
 let totalValue = 0;
-
-for (const item of items) {
-  // TODO: Acumula el valor de cada elemento
-  // totalValue += item.value;
+for (const book of books) {
+  // Sumamos el valor del libro actual al total acumulado
+  totalValue += book.value; 
 }
+const averageValue = books.length > 0 ? totalValue / books.length : 0;
 
-// TODO: Calcula el promedio
-const averageValue = items.length > 0 ? totalValue / items.length : 0;
-
-console.log(`Total ${valueLabel}: ${totalValue}`);
-console.log(`Promedio ${valueLabel}: ${averageValue.toFixed(1)}`);
+console.log(`Total acumulado (${valueLabel}): $${totalValue.toFixed(2)}`);
+console.log(`Promedio de ${valueLabel}: $${averageValue.toFixed(2)}`);
 
 console.log("");
-
 // ============================================
 // SECCIÓN 5: Máximo y mínimo
 // ============================================
 console.log("=== MÁXIMO Y MÍNIMO ===");
+let maxBook = books[0] ?? null;
+let minBook = books[0] ?? null;
 
-// TODO: Variables para el máximo y mínimo
-// Pista: inicializa con items[0] si el array no está vacío
-let maxItem = items[0] ?? null;
-let minItem = items[0] ?? null;
-
-if (items.length > 0) {
-  // TODO: Recorre con for...of y compara values para encontrar max y min
-  for (const item of items) {
-    // TODO: Comparar y actualizar maxItem y minItem
+if (books.length > 0) {
+  // 2. Recorremos con for...of para comparar
+  for (const book of books) {
+     // Si el precio del libro actual es MAYOR al que teníamos guardado...
+    if (book.value > maxBook.value) {
+      maxBook = book; // Actualizamos el máximo
+    }
+     // Si el precio del libro actual es MENOR al que teníamos guardado...
+    if (book.value < minBook.value) {
+      minBook = book; // Actualizamos el mínimo
+    }
   }
 
-  // TODO: Imprime los resultados
-  console.log(`Mayor ${valueLabel}: ${maxItem?.name} (${maxItem?.value})`);
-  console.log(`Menor ${valueLabel}: ${minItem?.name} (${minItem?.value})`);
+  console.log(`Mayor ${valueLabel}: ${maxBook.name} ($${maxBook.value.toFixed(2)})`);
+  console.log(`Menor ${valueLabel}: ${minBook.name} ($${minBook.value.toFixed(2)})`);
 }
 
 console.log("");
@@ -130,18 +130,13 @@ console.log("");
 // ============================================
 console.log("=== REPORTE DETALLADO ===");
 
-// TODO: Usa for clásico para generar el reporte
-// Indica si cada elemento está sobre o bajo el promedio
-for (let i = 0; i < items.length; i++) {
-  const item = items[i];
+// Usamos el for clásico para cumplir con el requisito del bucle indexado
+for (let i = 0; i < books.length; i++) {
+  const book = books[i];
+  const comparison = book.value >= averageValue ? "🟢 SOBRE EL PROMEDIO" : "🔴 BAJO EL PROMEDIO";
 
-  // TODO: Determina si el item está sobre o bajo el promedio
-  // Pista: usa el operador ternario o if/else
-  const comparison = ""; // TODO: "sobre el promedio" o "bajo el promedio"
-
-  // TODO: Imprime la línea del reporte
-  console.log(`${i + 1}. ${item.name} — ${comparison}`);
+  // Imprimimos la línea del reporte
+  console.log(`${i + 1}. ${book.name} ($${book.value.toFixed(2)}) — ${comparison}`);
 }
-
 console.log("");
 console.log("=== FIN DEL REPORTE ===");
